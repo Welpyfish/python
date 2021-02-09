@@ -33,7 +33,6 @@ class Ship:
 
         # Update rect object from self.x
         self.rect.x = self.x
-        pygame.display.set_caption("Alien Invasion - " + str(self.rect.x))
 
     def blitme(self):
         """Draw the ship at its current location."""
