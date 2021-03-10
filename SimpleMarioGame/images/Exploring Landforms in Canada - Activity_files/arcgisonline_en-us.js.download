@@ -1,2 +1,0 @@
-//>>built
-define("arcgisonline/nls/arcgisonline_en-us",{"esri/layers/vectorTiles/nls/common":{_localized:{}}});

@@ -9,17 +9,18 @@ class Settings:
         self.bg_color = (230, 230, 230)
 
         # Mario settings
-        self.mario_up_speed = 2
-        self.mario_down_speed = 2
-        self.mario_right_speed = 2
-        self.mario_left_speed = 2
+        self.mario_up_speed = 0.8
+        self.mario_down_speed = 0.8
+        self.mario_right_speed = 0
+        self.mario_left_speed = 0
 
         # Bowser settings
         self.bowser_speed = 1
 
         # Fireball settings
-        self.fireball_speed = 1.5
+        self.fireball_speed = 1
         self.fireballs_allowed = 2
+        self.fireball_chance = 200
 
         self.initialize_dynamic_settings()
 
@@ -29,6 +30,9 @@ class Settings:
         # bowser_direction of 1 represents down; -1 represents up
         self.bowser_direction = -1
         self.bowser_hp = 16
+
+        self.mario_hp = 8
+        self.fireball_hp = 1
 
 
 

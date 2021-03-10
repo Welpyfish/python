@@ -12,7 +12,8 @@ class Bowser(Sprite):
         self.screen_rect = self.screen.get_rect()
 
         # Load the bowser image and set its rect attribute.
-        self.image = pygame.image.load("C:/temp/SimpleMarioGame/dragon.png")
+        self.image = pygame.image.load("C:/William/git/python/SimpleMarioGame/images/bowser.png")
+        self.image = pygame.transform.scale(self.image, (120, 144))
         self.rect = self.image.get_rect()
 
         # Start bowser near the middle right of the screen.
