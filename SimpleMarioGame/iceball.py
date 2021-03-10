@@ -23,7 +23,7 @@ class Iceball(Sprite):
     def update(self):
         """Move the iceball up the screen."""
         # Update the decimal position of the bullet.
-        self.x += self.settings.fireball_speed
+        self.x += self.settings.iceball_speed
         # Update the rect position
         self.rect.x = self.x
 

@@ -4,6 +4,7 @@ from time import sleep
 from random import randint
 from settings import Settings
 from gamestats import GameStats
+from button import Button
 from mario import Mario
 from bowser import Bowser
 from iceball import Iceball
@@ -26,16 +27,39 @@ class MarioGame:
         self.iceballs = pygame.sprite.Group()
         self.fireballs = pygame.sprite.Group()
 
+        # Make the Play button.
+        self.play_button = Button(self, "Play")
+
     def run_game(self):
         """Start the main loop for the game."""
         while True:
             self._check_events()
 
-            self.mario.update()
+            if self.stats.game_active:
+                self.mario.update()
+                self._update_iceballs()
+                self._update_fireballs()
+                self._update_bowser()
+
             self._update_screen()
-            self._update_iceballs()
-            self._update_fireballs()
-            self._update_bowser()
+
+    def _start_game(self):
+        # Reset the game settings.
+        self.settings.initialize_dynamic_settings()
+
+        # Reset game statistics.
+        self.stats.reset_stats()
+        self.stats.game_active = True
+
+        # Get rid of any remaining aliens and bullets
+        self.iceballs.empty()
+        self.fireballs.empty()
+
+        self.bowser.center_bowser()
+        self.mario.center_mario()
+
+        # Hide the mouse cursor.
+        pygame.mouse.set_visible(False)
 
     def _check_events(self):
         """Respond to keypresses and mouse events."""
@@ -48,6 +72,7 @@ class MarioGame:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
                 
     def _check_keydown_events(self, event):
         """Respond to keypresses"""
@@ -75,31 +100,40 @@ class MarioGame:
         elif event.key == pygame.K_LEFT:
             self.mario.moving_left = False
 
+    def _check_play_button(self, mouse_pos):
+        """Start a new game when the player clicks Play."""
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self._start_game()
+
     def _check_bowser_direction(self):
         if self.bowser.check_edges():
-            self.settings.bowser_direction *= -1
+            self.change_bowser_direction()
+
+    def change_bowser_direction(self):
+        self.settings.bowser_direction *= -1
            
-    def _check_bowser_iceball_collisions(self):
+    def _check_bowser_collisions(self):
         for iceball in self.iceballs.copy():
             if pygame.sprite.spritecollideany(self.bowser, self.iceballs):
                 self.iceballs.remove(iceball)
                 if self.stats.bowser_hp > 0:
                     self.stats.bowser_hp -= 1
                 else:
-                    sleep(1)
-                    self.stats.bowser_hp = self.settings.bowser_hp
+                    self.stats.game_active = False
+                    pygame.mouse.set_visible(True)
 
-    def _check_mario_fireball_collisions(self):
+    def _check_mario_collisions(self):
         for fireball in self.fireballs.copy():
             if pygame.sprite.spritecollideany(self.mario, self.fireballs):
                 self.fireballs.remove(fireball)
-                if self.settings.mario_hp > 0:
-                    self.settings.mario_hp -= 1
+                if self.stats.mario_hp > 0:
+                    self.stats.mario_hp -= 1
                 else:
-                    sleep(1)
-                    self.settings.mario_hp = 8
+                    self.stats.game_active = False
+                    pygame.mouse.set_visible(True)
 
-    def _check_iceball_fireball_collisions(self):
+    def _check_projectile_collisions(self):
         for fireball in self.fireballs.copy():
             if pygame.sprite.spritecollideany(fireball, self.iceballs):
                 if fireball.fireball_hp > 0:
@@ -109,24 +143,33 @@ class MarioGame:
                 else:
                     pygame.sprite.groupcollide(self.iceballs, self.fireballs, True, True)
             
-
     def fire_iceball(self):
         """Create a new iceball and add it to the iceballs group."""
-        if len(self.iceballs) < self.settings.fireballs_allowed:
+        if len(self.iceballs) < self.settings.iceballs_allowed:
             new_iceball = Iceball(self)
             self.iceballs.add(new_iceball)
 
     def fire_fireball(self):
         """Create a new fireball and add it to the fireballs group."""
-        new_fireball = Fireball(self)
-        self.fireballs.add(new_fireball)
+        if len(self.fireballs) < self.settings.fireballs_allowed:
+            new_fireball = Fireball(self)
+            self.fireballs.add(new_fireball)
 
-    def generate_fireball_chance(self):
+    def bowser_fireball_chance(self):
         if -120 <= self.bowser.y - self.mario.y <= 120:
             self.fireball_chance = self.settings.fireball_chance
-            print("lucky")
         else: 
             self.fireball_chance = 0
+
+    def bowser_moving_chance(self):
+        if self.settings.bowser_direction == 1 and self.mario.y <= self.bowser.y:
+            self.movement_chance = self.settings.movement_chance
+        elif self.settings.bowser_direction == 1 and self.mario.y > self.bowser.y:
+            self.movement_chance = -1 * self.settings.movement_chance
+        elif self.settings.bowser_direction == -1 and self.mario.y >= self.bowser.y:
+            self.movement_chance = self.settings.movement_chance
+        elif self.settings.bowser_direction == -1 and self.mario.y < self.bowser.y:
+            self.movement_chance = -1 * self.settings.movement_chance
 
     def _update_iceballs(self):
         """Update the position of iceballs and get rid of old iceballs."""
@@ -138,7 +181,7 @@ class MarioGame:
             if iceball.rect.left >= self.settings.screen_width:
                 self.iceballs.remove(iceball)
 
-        self._check_bowser_iceball_collisions()
+        self._check_bowser_collisions()
 
     def _update_fireballs(self):
         """Update the position of fireballs and get rid of old fireballs."""
@@ -150,15 +193,18 @@ class MarioGame:
             if fireball.rect.right <= 0:
                 self.fireballs.remove(fireball)
 
-        self._check_mario_fireball_collisions()
-        self._check_iceball_fireball_collisions()
+        self._check_mario_collisions()
+        self._check_projectile_collisions()
 
     def _update_bowser(self):
         self._check_bowser_direction()
         self.bowser.update()
-        self.generate_fireball_chance()
+        self.bowser_fireball_chance()
+        self.bowser_moving_chance()
         if randint(1, 500 - self.fireball_chance) == 1:
             self.fire_fireball()
+        if randint(1, 800 - self.movement_chance) == 1:
+            self.change_bowser_direction()             
    
     def _update_screen(self):
         """Update images on the screen, and flip to the new screen."""
@@ -167,6 +213,10 @@ class MarioGame:
         self.bowser.blitme()
         self.iceballs.draw(self.screen)
         self.fireballs.draw(self.screen)
+
+        # Draw the play button if the game is inactive.
+        if not self.stats.game_active:
+            self.play_button.draw_button()
 
         pygame.display.flip()
 

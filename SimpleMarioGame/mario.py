@@ -10,7 +10,7 @@ class Mario:
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
-        # Load the ship image and get its rect
+        # Load the mario image and get its rect
         self.image = pygame.image.load("C:/William/git/python/SimpleMarioGame/images/iceluigi.png")
         self.image = pygame.transform.scale(self.image, (65, 90))
         self.rect = self.image.get_rect()
@@ -18,7 +18,7 @@ class Mario:
         # Start each new mario at the center left of the screen.
         self.rect.midleft = self.screen_rect.midleft
 
-        # Store a decimal value for the ship's horizontal position.
+        # Store a decimal value for the mario's horizontal position.
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
         
@@ -40,10 +40,16 @@ class Mario:
         if self.moving_left and self.rect.left > 0:
             self.x -= self.settings.mario_left_speed
 
-        # Update rect object from self.x
+        # Update rect object from self.x and self.y
         self.rect.x = self.x
         self.rect.y = self.y
 
     def blitme(self):
         """Draw mario at his current location."""
         self.screen.blit(self.image, self.rect)
+
+    def center_mario(self):
+        """Center mario on the screen."""
+        self.rect.midleft = self.screen_rect.midleft
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)

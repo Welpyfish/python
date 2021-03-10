@@ -16,11 +16,16 @@ class Settings:
 
         # Bowser settings
         self.bowser_speed = 1
+        self.movement_chance = 600
 
         # Fireball settings
         self.fireball_speed = 1
-        self.fireballs_allowed = 2
+        self.fireballs_allowed = 12
         self.fireball_chance = 200
+
+        # Iceball settings
+        self.iceball_speed = 1.5
+        self.iceballs_allowed = 2
 
         self.initialize_dynamic_settings()
 

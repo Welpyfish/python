@@ -12,4 +12,4 @@ class GameStats:
     def reset_stats(self):
         """Initialize statistics that can change during the game."""
         self.bowser_hp = self.settings.bowser_hp
-        self.fireball_hp = self.settings.fireball_hp
+        self.mario_hp = self.settings.mario_hp

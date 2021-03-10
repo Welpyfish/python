@@ -36,4 +36,9 @@ class Bowser(Sprite):
         """Draw bowser at his current location."""
         self.screen.blit(self.image, self.rect)
 
+    def center_bowser(self):
+        """Center bowser on the screen."""
+        self.rect.midright = self.screen_rect.midright
+        self.y = float(self.rect.y)
+
     
