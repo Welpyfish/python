@@ -35,18 +35,18 @@ class Block(Sprite):
         # Update block's x and y values, not the rect
         if self.moving_right and self.speedX <= self.settings.maxspeed:
             if self.speedX < 0.05:
-                self.speedX += 0.008
+                self.speedX += 0.01
             elif 0.05 <= self.speedX < 0.1:
-                self.speedX += 0.012
+                self.speedX += 0.015
             else:
-                self.speedX += 0.006
+                self.speedX += 0.008
         if self.moving_left and self.speedX >= -self.settings.maxspeed:
             if self.speedX > -0.05:
-                self.speedX -= 0.008
+                self.speedX -= 0.01
             elif -0.05 >= self.speedX > -0.1:
-                self.speedX -= 0.012
+                self.speedX -= 0.015
             else:
-                self.speedX -= 0.006
+                self.speedX -= 0.008
         self.simulate_friction(0.6)
         self.x += self.speedX
         self.check_edges()

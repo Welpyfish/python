@@ -19,6 +19,7 @@ class MarioGame:
 
         self.settings = Settings()
         self.stats = GameStats(self)
+        #self.sb = Scoreboard
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
 

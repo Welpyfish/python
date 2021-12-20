@@ -11,16 +11,16 @@ class Settings:
         self.ground_color = (0, 50, 0)
 
         # Mario settings
-        self.maxspeed = 0.8
-        self.initSpeed = 2
-        self.gravity = 0.01
-        self.block_hp = 1000
+        self.maxspeed = 1
+        self.block_initSpeed = 3
+        self.gravity = 0.02
         self.mario_right_speed = 0
         self.mario_left_speed = 0
 
         # Bowser settings
         self.bowser_speed = 1
         self.jump_chance = 600
+        self.bowser_initSpeed = 3
 
         # Fireball settings
         self.fireball_speed = 1
@@ -38,5 +38,5 @@ class Settings:
 
         self.bowser_hp = 32
 
-        self.block_hp = 8
+        self.block_hp = 5
         self.fireball_hp = 1

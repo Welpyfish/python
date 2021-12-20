@@ -14,8 +14,7 @@ class Scoreboard:
         self.text_color = (30, 30, 30)
         self.font = pygame.font.SysFont(None, 48)
 
-    def prep_win_lose(self):
+    def prep_win_lose(self, msg):
         """."""
-        high_score = round(self.stats.high_score, -1)
-        high_score_str = "{:,}".format(high_score)
-        self.high_score_image = self.font.render(high_score_str, True, self.text_color, self.settings.bg_color)
+        gameover_str = msg
+        self.gameoverimage = self.font.render(gameover_str, True, self.text_color, self.settings.bg_color)
